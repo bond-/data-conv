@@ -1,4 +1,5 @@
 apply plugin: 'gaelyk'
+apply plugin: 'gae'
 apply plugin: 'gae-geb'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -14,7 +15,7 @@ buildscript {
 
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1'
-        classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.8', {
+        classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.8.1', {
             exclude module: "gradle-fatjar-plugin"
         }
         classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1'
@@ -27,6 +28,14 @@ repositories {
     mavenLocal()
 }
 
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['src/main/groovy', 'src/main/webapp/WEB-INF/groovy']
+        }
+    }
+}
+
 /*
 configurations {
     precompile
@@ -37,40 +46,40 @@ gaelykPrecompileTemplate.runtimeClasspath += project.configurations.precompile
 */
 
 dependencies {
-    def gaeVersion = '1.8.2'
+    def gaeVersion = '1.8.3'
     def groovyVersion = '2.1.6'
-    groovy "org.codehaus.groovy:groovy-all:${groovyVersion}" 
+    groovy "org.codehaus.groovy:groovy-all:${groovyVersion}"
 //    precompile "org.codehaus.groovy:groovy-ant:${groovyVersion}"     
 //    precompile "org.ow2.asm:asm:4.0" 
 //    precompile "commons-cli:commons-cli:1.2"  
     compile "org.codehaus.groovy:groovy-json:${groovyVersion}"
-    compile "org.codehaus.groovy:groovy-servlet:${groovyVersion}"    
+    compile "org.codehaus.groovy:groovy-servlet:${groovyVersion}"
     compile "com.google.appengine:appengine-api-1.0-sdk:$gaeVersion",
             "com.google.appengine:appengine-api-labs:$gaeVersion"
     compile 'org.gaelyk:gaelyk:2.0'
-    
-    
 
-    /** 
+
+
+    /**
      * To add binary plugin just declare it as a dependency. For example,
      * uncomment following to add GPars support to your Gaelyk project.
      * @see https://github.com/musketyr/gpars-appengine
-     */ 
+     */
     // compile 'org.codehaus.gpars:gpars-appengine:0.1'
-    
+
     /**
      * Gaelyk console serves as playground or key-hole surgery tool for
      * your application
      * @see https://github.com/gaelyk/gaelyk-console
      */
     // compile 'org.gaelyk:gaelyk-console:2.0'
-    
+
     testCompile 'org.gaelyk:gaelyk-spock:0.4'
     testCompile "com.google.appengine:appengine-api-stubs:$gaeVersion",
-                "com.google.appengine:appengine-testing:$gaeVersion"
-                
+            "com.google.appengine:appengine-testing:$gaeVersion"
+
     functionalTestCompile 'org.codehaus.geb:geb-spock:0.7.0',
-                          'org.seleniumhq.selenium:selenium-firefox-driver:2.22.0'
+            'org.seleniumhq.selenium:selenium-firefox-driver:2.22.0'
     gaeSdk "com.google.appengine:appengine-java-sdk:$gaeVersion"
 }
 
@@ -106,12 +115,35 @@ eclipse {
             withXml { xml ->
                 xml.asNode().classpathentry.find { it.@kind == 'output' && it.@path == 'bin' }.@path = 'src/main/webapp/WEB-INF/classes'
                 xml.asNode().appendNode('classpathentry', [kind: 'con', path: 'com.google.appengine.eclipse.core.GAE_CONTAINER'])
-                            .appendNode('attributes')
-                            .appendNode('attribute', [name: 'org.eclipse.jst.component.nondependency', value: '/src/main/webapp/WEB-INF/lib'])
+                        .appendNode('attributes')
+                        .appendNode('attribute', [name: 'org.eclipse.jst.component.nondependency', value: '/src/main/webapp/WEB-INF/lib'])
                 xml.asNode().appendNode('classpathentry', [exported: 'true', kind: 'con', path: 'GROOVY_SUPPORT'])
-                            .appendNode('attributes')
-                            .appendNode('attribute', [name: 'org.eclipse.jst.component.nondependency', value: '/src/main/webapp/WEB-INF/lib'])
+                        .appendNode('attributes')
+                        .appendNode('attribute', [name: 'org.eclipse.jst.component.nondependency', value: '/src/main/webapp/WEB-INF/lib'])
             }
         }
+    }
+}
+
+gae {
+    httpPort = 8085
+    optimizeWar = true
+
+    appcfg {
+        email = gaeApplicationEmail
+        passIn = true
+
+        logs {
+            severity = 2
+            outputFile = file('data-converter-app.log')
+        }
+
+        app {
+            id = 'data-converter'
+        }
+    }
+
+    update {
+        useJava7 = true
     }
 }

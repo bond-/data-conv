@@ -1,2 +1,5 @@
 .idea
 *.iml
+*.log
+gradle.properties
+src/main/webapp/WEB-INF/classes
