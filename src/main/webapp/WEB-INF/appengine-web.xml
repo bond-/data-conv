@@ -17,10 +17,6 @@
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
     </system-properties>
 
-    <env-variables>
-        <env-var name="DEFAULT_ENCODING" value="utf-8" />
-    </env-variables>
-
     <!-- Uncomment this section if you want your application to be able to receive XMPP messages -->
     <!-- And create a file named jabber.groovy in /WEB-INF/groovy -->
     <!-- Similarily, if you want to receive incoming emails -->
