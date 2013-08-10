@@ -132,6 +132,7 @@ gae {
     appcfg {
         email = gaeApplicationEmail
         passIn = true
+        oauth2 = true
 
         logs {
             severity = 2
