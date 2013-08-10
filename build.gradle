@@ -94,6 +94,10 @@ idea {
             def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
             gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir])
         }
+
+        module {
+            sourceDirs += file('src/dsld')
+        }
     }
 }
 
